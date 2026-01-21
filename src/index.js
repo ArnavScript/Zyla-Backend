@@ -9,15 +9,16 @@ const problemRouter = require("./routes/problemCreator");
 const submitRouter = require("./routes/submit")
 const aiRouter = require("./routes/aiChatting")
 const videoRouter = require("./routes/videoCreator");
-const cors = require('cors')
+const cors = require('cors');
 
 
 app.use(cors({
     origin: [
         "http://localhost:5173",
-        "https://zyla-frontend.vercel.app" // change if needed
+        "https://zyla-frontend.vercel.app" 
     ],
-    credentials: true
+    credentials: true,
+    optionsSuccessStatus: 200,
 }));
 
 
