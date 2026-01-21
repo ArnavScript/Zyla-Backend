@@ -11,12 +11,15 @@ const aiRouter = require("./routes/aiChatting")
 const videoRouter = require("./routes/videoCreator");
 const cors = require('cors')
 
-// console.log("Hello")
 
 app.use(cors({
-    origin: 'http://localhost:5173',
-    credentials: true 
-}))
+    origin: [
+        "http://localhost:5173",
+        "https://zyla-frontend.vercel.app" // change if needed
+    ],
+    credentials: true
+}));
+
 
 app.use(express.json());
 app.use(cookieParser());
@@ -34,22 +37,28 @@ app.get('/', (req, res)=>{
    })
 });
 
-const InitalizeConnection = async ()=>{
-    try{
 
-        await Promise.all([main(),redisClient.connect()]);
-        console.log("DB Connected");
-        
-        app.listen(process.env.PORT, ()=>{
-            console.log("Server listening at port number: "+ process.env.PORT);
-        })
+// ✅ Safe connection for Vercel
+let isConnected = false;
 
+const initializeConnection = async () => {
+    if (isConnected) return;
+
+    try {
+        await Promise.all([
+            main(),
+            redisClient.connect()
+        ]);
+
+        isConnected = true;
+        console.log("DB + Redis Connected");
+    } catch (err) {
+        console.log("Error:", err);
     }
-    catch(err){
-        console.log("Error: "+err);
-    }
-}
+};
+
+initializeConnection();
 
 
-InitalizeConnection();
-
+// ✅ Export for Vercel
+module.exports = app;
